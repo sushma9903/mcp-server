@@ -1,5 +1,3 @@
----
-
 # MCP Tool Server
 
 A lightweight **Model Context Protocol (MCP) Tool Server** built in Python that exposes real-world tools (weather, stock data, and internet search) over **STDIO transport**.
@@ -167,8 +165,11 @@ Using the Inspector UI:
 3. Start the server
 4. Invoke tools interactively
 
-### Example: Web Search
+### Example Tool Invocations
 
+#### 🌐 Web Search
+
+**Input:**
 ```json
 {
   "query": "Model Context Protocol MCP",
@@ -176,54 +177,110 @@ Using the Inspector UI:
 }
 ```
 
----
-
-## 💡 Why STDIO Transport?
-
-* Ideal for local development and inspection
-* No open ports or network configuration
-* Secure and deterministic
-* Easily replaceable with HTTP transport later
-
----
-"Below is a **clean, effective, README-ready section** you can **drop in as-is**.
-It is written the way a reviewer expects: **practical, honest, and experience-driven**, not theoretical.
-
----
-
-## 🚧 Challenges With Other Transport Types
-
-During development, alternative transports were explored, including **Streamable HTTP** and **Server-Sent Events (SSE)**. These were intentionally **not used** in the final implementation due to the following practical issues.
-
-### Streamable HTTP
-
-* Requires a **persistent HTTP server lifecycle** in addition to MCP logic
-* Introduces ambiguity around:
-
-  * When the server should start and stop
-  * How connections are reused or closed
-* Adds unnecessary complexity for a tool-layer-only implementation
-* Makes local inspection more fragile compared to STDIO
-
-For a project focused on **tool correctness**, this complexity provides no real benefit.
+**Output:**
+```json
+{
+  "results": [
+    {
+      "title": "Model Context Protocol Documentation",
+      "link": "https://modelcontextprotocol.io/",
+      "snippet": "The Model Context Protocol (MCP) is an open protocol that standardizes how applications provide context to LLMs..."
+    },
+    {
+      "title": "Introducing the Model Context Protocol",
+      "link": "https://anthropic.com/news/model-context-protocol",
+      "snippet": "Today, we're introducing the Model Context Protocol (MCP), a new standard for connecting AI assistants..."
+    }
+  ]
+}
+```
 
 ---
 
-### Server-Sent Events (SSE)
+#### 🌦️ Weather Tool
 
-* Requires:
+**Input:**
+```json
+{
+  "city": "San Francisco"
+}
+```
 
-  * Long-lived HTTP connections
-  * Careful client-side stream handling
-* Difficult to validate cleanly with MCP Inspector
-* Debugging tool execution becomes harder due to streaming semantics
-* Error handling and recovery are more complex than needed at this stage
+**Output:**
+```json
+{
+  "city": "San Francisco",
+  "temperature": 18.5,
+  "conditions": "Clear sky",
+  "humidity": 65,
+  "wind_speed": 3.5
+}
+```
 
-SSE is better suited for **live, streaming agent responses**, not for validating a foundational MCP tool server.
 ---
 
+#### 📈 Stock Price Tool
 
-## 🚧 What This Project Intentionally Excludes
+**Input:**
+```json
+{
+  "symbol": "AAPL"
+}
+```
+
+**Output:**
+```json
+{
+  "symbol": "AAPL",
+  "price": 195.89,
+  "currency": "USD",
+  "timestamp": "2024-01-15T16:00:00",
+  "change": "+2.34",
+  "change_percent": "+1.21%"
+}
+```
+
+---
+
+## 🚧 Why STDIO Transport?
+
+**STDIO was chosen because it provides the simplest, most reliable path for tool development and validation.**
+
+### What STDIO Gives You
+
+* **Zero configuration**: No ports, no networking, no HTTP servers to manage
+* **Perfect for inspection**: MCP Inspector works flawlessly with STDIO
+* **Deterministic lifecycle**: Process starts when called, exits when done
+* **Secure by default**: No exposed endpoints or security concerns
+* **Easy debugging**: Direct input/output makes testing and troubleshooting straightforward
+
+### Why Not HTTP/SSE?
+
+While HTTP and Server-Sent Events (SSE) transports are valid MCP options, they introduce unnecessary complexity for a tool server:
+
+**HTTP Transport Issues:**
+* Requires managing a persistent web server alongside MCP logic
+* Adds lifecycle complexity (when to start/stop, connection pooling, etc.)
+* Makes local testing harder - you need HTTP clients, manage ports, handle CORS
+* Overkill for simple tool execution that doesn't need persistent connections
+
+**SSE Transport Issues:**
+* Designed for streaming real-time updates, not one-shot tool calls
+* Requires long-lived connections and complex client-side stream handling
+* Harder to debug tool execution due to streaming semantics
+* More complex error recovery and retry logic
+* Inspector support is less mature
+
+### When to Use Other Transports
+
+* **HTTP**: When you need remote deployment or multiple clients calling the server simultaneously
+* **SSE**: When building streaming AI agents that need real-time, progressive responses
+
+For a foundational tool server focused on correctness and reliability, STDIO is the right choice. You can always add HTTP transport later without changing any tool implementations.
+
+---
+
+## 💡 What This Project Intentionally Excludes
 
 * AI agent logic
 * LangChain / LangGraph workflows
@@ -250,10 +307,23 @@ No changes to existing tools are required.
 
 ## ✅ Key Takeaways
 
-* Correct MCP server implementation
-* Real external integrations
-* Clean tool contracts
+* Correct MCP server implementation using STDIO transport
+* Real external integrations (weather, stocks, search)
+* Clean tool contracts with clear input/output schemas
 * Production-style separation of concerns
-* Agent-ready foundation
+* Agent-ready foundation that can scale to complex workflows
 
 ---
+
+## 📚 Additional Resources
+
+* [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
+* [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
+* [OpenWeatherMap API](https://openweathermap.org/api)
+* [Google Custom Search API](https://developers.google.com/custom-search)
+
+---
+
+## 📄 License
+
+MIT License - See LICENSE file for details
