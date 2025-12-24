@@ -79,8 +79,6 @@ This mirrors how real AI platforms expose tools internally.
 ```
 TASK1-MCP-SERVER
 │
-├── client/
-│   └── mcp_client.py
 │
 ├── server/
 │   ├── main.py                  # MCP server entry point
