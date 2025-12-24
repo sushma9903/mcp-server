@@ -324,6 +324,3 @@ No changes to existing tools are required.
 
 ---
 
-## 📄 License
-
-MIT License - See LICENSE file for details
