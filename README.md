@@ -186,6 +186,42 @@ Using the Inspector UI:
 * Easily replaceable with HTTP transport later
 
 ---
+"Below is a **clean, effective, README-ready section** you can **drop in as-is**.
+It is written the way a reviewer expects: **practical, honest, and experience-driven**, not theoretical.
+
+---
+
+## 🚧 Challenges With Other Transport Types
+
+During development, alternative transports were explored, including **Streamable HTTP** and **Server-Sent Events (SSE)**. These were intentionally **not used** in the final implementation due to the following practical issues.
+
+### Streamable HTTP
+
+* Requires a **persistent HTTP server lifecycle** in addition to MCP logic
+* Introduces ambiguity around:
+
+  * When the server should start and stop
+  * How connections are reused or closed
+* Adds unnecessary complexity for a tool-layer-only implementation
+* Makes local inspection more fragile compared to STDIO
+
+For a project focused on **tool correctness**, this complexity provides no real benefit.
+
+---
+
+### Server-Sent Events (SSE)
+
+* Requires:
+
+  * Long-lived HTTP connections
+  * Careful client-side stream handling
+* Difficult to validate cleanly with MCP Inspector
+* Debugging tool execution becomes harder due to streaming semantics
+* Error handling and recovery are more complex than needed at this stage
+
+SSE is better suited for **live, streaming agent responses**, not for validating a foundational MCP tool server.
+---
+
 
 ## 🚧 What This Project Intentionally Excludes
 
